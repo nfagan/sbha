@@ -41,7 +41,10 @@ keys = shared_utils.general.keys( files );
 
 assert( numel(keys) == 1, 'Expected one key; got %d', numel(keys) );
 
-file = shared_utils.general.get( files, keys{1} );
+unified_file = shared_utils.general.get( files, keys{1} );
+
+unified_file.identifier = identifier;
+unified_file.edf_components = cshorzcat( params.edf_components, unified_file.edf_file );
 
 end
 
