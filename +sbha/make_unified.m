@@ -54,8 +54,11 @@ end
 
 function id = get_identifier(file, filename)
 
-tt = file.opts.STRUCTURE.trial_type;
-ct = ternary( file.opts.STRUCTURE.is_masked, 'nc', 'c' );
+s = file.opts.STRUCTURE;
+
+trial_type = s.trial_type;
+consciousness_type = ternary( s.is_masked, 'nc', 'c' );
+target_type = ternary( s.is_two_targets, 'twotarg', 'onetarg' );
 
 date = filename(end-23:end);
 
@@ -63,6 +66,6 @@ if ( shared_utils.char.ends_with(date, '.mat') )
   date = date(1:end-4);
 end
 
-id = sprintf( '%s-%s-%s.mat', ct, tt, date );
+id = sprintf( '%s-%s-%s-%s.mat', consciousness_type, trial_type, target_type, date );
 
 end
