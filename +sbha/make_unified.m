@@ -57,7 +57,7 @@ function id = get_identifier(file, filename)
 tt = file.opts.STRUCTURE.trial_type;
 ct = ternary( file.opts.STRUCTURE.is_masked, 'nc', 'c' );
 
-date = strrep( filename(end-23:end), '_', ':' );
+date = filename(end-23:end);
 
 if ( shared_utils.char.ends_with(date, '.mat') )
   date = date(1:end-4);
