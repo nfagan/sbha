@@ -20,36 +20,10 @@ result = loop_runner.run( @make_xls_summary_main, params );
 
 end
 
-function func = get_filename_func(format)
+function xls_summary = make_xls_summary_main(files, params)
 
-switch ( format )
-  case 'xls'
-    func = @(x) strrep( x, '.mat', '.xls' );
-  case 'csv'
-    func = @(x) strrep( x, '.mat', '.csv' );
-  otherwise
-    error( 'Unimplemented format: "%s".', format );
-end
-  
-end
-
-
-function func = get_save_func(format)
-
-switch ( format )
-  case 'xls'
-    func = @save_xls_file;
-  case 'csv'
-    func = @save_csv_file;
-  otherwise
-    error( 'Unimplemented format: "%s".', format );
-end
-  
-end
-
-function out = xls_to_csv(sheet)
-
-out = char( cellfun(@num2str, sheet, 'un', 0) );
+unified_file = shared_utils.general.get( files, 'unified' );
+xls_summary = sbha.to_xls_compatible_summary( unified_file );
 
 end
 
@@ -85,9 +59,34 @@ end
 
 end
 
-function xls_summary = make_xls_summary_main(files, params)
+function func = get_filename_func(format)
 
-unified_file = shared_utils.general.get( files, 'unified' );
-xls_summary = sbha.to_xls_compatible_summary( unified_file );
+switch ( format )
+  case 'xls'
+    func = @(x) strrep( x, '.mat', '.xls' );
+  case 'csv'
+    func = @(x) strrep( x, '.mat', '.csv' );
+  otherwise
+    error( 'Unimplemented format: "%s".', format );
+end
+  
+end
+
+function func = get_save_func(format)
+
+switch ( format )
+  case 'xls'
+    func = @save_xls_file;
+  case 'csv'
+    func = @save_csv_file;
+  otherwise
+    error( 'Unimplemented format: "%s".', format );
+end
+  
+end
+
+function out = xls_to_csv(sheet)
+
+out = char( cellfun(@num2str, sheet, 'un', 0) );
 
 end

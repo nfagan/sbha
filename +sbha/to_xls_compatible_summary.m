@@ -68,6 +68,7 @@ dat = unified_file.DATA;
 
 if ( isempty(dat) )
   events = [];
+  return
 end
 
 [~, I] = max( arrayfun(@(x) numel(fieldnames(x.events)), dat) );
