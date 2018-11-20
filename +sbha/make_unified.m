@@ -1,4 +1,4 @@
-function results = make_unified(varargin)
+function results = make_unified(subdirs, varargin)
 
 defaults = sbha.get_common_make_defaults();
 
@@ -7,8 +7,6 @@ params = sbha.parsestruct( defaults, varargin );
 conf = params.config;
 
 raw_p = fullfile( sbha.dataroot(conf), 'raw' );
-
-subdirs = shared_utils.io.dirnames( raw_p, 'folders' );
 
 for i = 1:numel(subdirs)
   loop_runner = sbha.get_looped_make_runner( params );
