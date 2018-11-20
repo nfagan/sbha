@@ -40,7 +40,7 @@ stim_mat(1, :) = cshorzcat( 'name', use_fields(:)' );
 
 for i = 1:numel(stim_names)
   stimulus = stim_setup.(stim_names{i});
-  stim_mat{i, 1} = stim_names{i};
+  stim_mat{i+1, 1} = stim_names{i};
   
   for j = 1:numel(use_fields)
     if ( ~isfield(stimulus, use_fields{j}) ), continue; end
