@@ -27,5 +27,6 @@ meta_file.subject = unified_file.opts.META.subject;
 meta_file.congruency = structure.trial_type;
 meta_file.conscious_type = sbha.get_consciousness_str( structure.is_masked );
 meta_file.target_type = sbha.get_target_str( structure.is_two_targets );
+meta_file.randomization_id = structure.randomization_id;
 
 end

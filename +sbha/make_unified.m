@@ -25,9 +25,9 @@ for i = 1:numel(subdirs)
   result = loop_runner.run( @make_unified_main, params );
   
   if ( i == 1 )
-    results = result;
+    results = result(:);
   else
-    results = [ results, result ];
+    results = [ results; result(:) ];
   end
 end
 

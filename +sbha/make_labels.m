@@ -39,18 +39,21 @@ for i = 1:n_trials
     selected_direction = 'none';
   end
   
+  randomization_id = meta_file.randomization_id;
+  
   init_str = ternary( acq_init, 'initiated-true', 'initiated-false' );
   correct_str = ternary( was_correct, 'correct-true', 'correct-false' );
   select_str = ternary( made_selection, 'made-selection-true', 'made-selection-false' );
   selected_direction = sprintf( 'selected-%s', selected_direction );
   congruent_direction = sprintf( 'congruent-%s', congruent_direction );
+  randomization_str = sprintf( 'randomization-%s', randomization_id );
   
   cats = { 'initiated', 'correct', 'made-selection' ...
-    , 'selected-direction', 'congruent-direction' };
+    , 'selected-direction', 'congruent-direction', 'randomization' };
   
   tmp_labs = addcat( fcat(), cats );
   setcat( tmp_labs, cats, {init_str, correct_str, select_str ...
-    , selected_direction, congruent_direction} );
+    , selected_direction, congruent_direction, randomization_str} );
   
   append( labs, tmp_labs );
 end
