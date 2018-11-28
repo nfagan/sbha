@@ -18,10 +18,12 @@ conf = struct();
 % ID
 conf.(const.config_id) = true;
 
+project_folder = sbha.util.get_project_folder();
+
 % PATHS
 PATHS = struct();
-PATHS.repositories = fileparts( sbha.util.get_project_folder() );
-PATHS.data_root = '';
+PATHS.repositories = fileparts( project_folder );
+PATHS.data_root = fullfile( project_folder, 'data' );
 
 % DEPENDENCIES
 DEPENDS = struct();
