@@ -130,4 +130,35 @@ for i = 1:numel(trial_data)
   summary{i+1, j+3} = trial_type;
 end
 
+rt = get_rt( unified_file );
+rt_cell = arrayfun( @(x) x, rt, 'un', 0 );
+summary(2:end, end+1) = rt_cell;
+summary{1, end} = 'rt';
+
+end
+
+function rt = get_rt(unified_file)
+
+trial_data = unified_file.DATA;
+structure = unified_file.opts.STRUCTURE;
+
+rt = nan( numel(trial_data), 1 );
+
+if ( ~isfield(structure, 'task_type') || ~strcmp(structure.task_type, 'rt') )
+  return
+end
+
+stim = unified_file.opts.STIMULI.setup.left_image1;
+
+choice_time = stim.target_duration;
+
+for i = 1:numel(trial_data)  
+  events = trial_data(i).events;
+  
+  targ_on = shared_utils.struct.field_or( events, 'rt_target_onset', nan );
+  targ_acq = shared_utils.struct.field_or( events, 'target_acquired', nan );
+  
+  rt(i) = targ_acq - targ_on - choice_time;
+end
+
 end
