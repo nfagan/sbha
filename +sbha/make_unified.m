@@ -8,6 +8,8 @@ conf = params.config;
 
 raw_p = fullfile( sbha.dataroot(conf), 'raw' );
 
+results = [];
+
 for i = 1:numel(subdirs)
   loop_runner = sbha.get_looped_make_runner( params );
 

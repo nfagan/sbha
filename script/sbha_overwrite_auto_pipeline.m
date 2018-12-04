@@ -1,10 +1,11 @@
 inputs = struct();
 inputs.overwrite = true;
+inputs.config = sbha.config.load();
 
 raw_data_p = fullfile( sbha.util.get_project_folder(), 'data', 'raw' );
 folders = shared_utils.io.dirnames( raw_data_p, 'folders' );
 
-sbha.make_unified( folders, inputs );
+res = sbha.make_unified( folders, inputs );
 
 %%
 
