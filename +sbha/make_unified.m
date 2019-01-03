@@ -10,6 +10,8 @@ raw_p = fullfile( sbha.dataroot(conf), 'raw' );
 
 results = [];
 
+subdirs = cellstr( subdirs );
+
 for i = 1:numel(subdirs)
   loop_runner = sbha.get_looped_make_runner( params );
 

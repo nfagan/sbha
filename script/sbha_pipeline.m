@@ -1,14 +1,10 @@
 inputs = struct();
 
-sbha.make_unified( inputs );
-
 %%
 
-sbha.make_xls_summary( inputs, 'files_containing', 'nc-congruent-twotarg-30-Nov-2018 16_17_57'  );
+subdirs = { '122718_Hitch_nonCosc_13ms' };
 
-%%
-              
-sbha.make_events( inputs );
+sbha.make_unified( subdirs, inputs );
 
 %%
 
@@ -18,4 +14,21 @@ sbha.make_labels( inputs );
 
 %%
 
+sbha.make_xls_summary( inputs );
+
+%%
+
 sbha.make_edfs( inputs );
+
+%%
+              
+sbha.make_events( inputs );
+sbha.make_edf_events( inputs );
+
+%%
+
+sbha.make_edf_trials( inputs ...
+  , 'event_name', 'cue_onset' ...
+  , 'look_back', -200 ...
+  , 'look_ahead', 1666 ...
+);
