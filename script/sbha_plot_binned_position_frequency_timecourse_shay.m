@@ -1,16 +1,19 @@
 %%  Config
 
 % Subdirectory of plots/pos_freq_timecourse/<date> in which to save plots.
-base_plot_subdirectory = 'hitch';
+base_plot_subdirectory = 'ephron';
 
 % Prefix each figure file with this string.
-base_plot_prefix = '';
+base_plot_prefix = 'ephron_NC';
+
+% Plot formates
+plot_formats = { 'png', 'svg', 'epsc', 'fig' };
 
 % Whether to save plots
 should_save_plots = true;
 
 % Where to draw horizontal dotted lines on the spectra, in ms.
-horz_lines = [ 0, 250, 667 ];
+horz_lines = [ 0, 17, 650 ];
 
 % Whether to use excel trial criteria
 use_trial_selection_criterion = false;
@@ -18,7 +21,7 @@ use_trial_selection_criterion = false;
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {};
+files_containing = {'nc-congruent-twotarg-03-Dec-2018 16_27_28'; 'nc-congruent-twotarg-03-Dec-2018 16_14_54'};
 
 %%  bin position frequencies over time
 
@@ -84,7 +87,7 @@ if ( should_save_plots )
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix );
+    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix, plot_formats );
   end
 end
 
@@ -127,6 +130,6 @@ if ( should_save_plots )
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix );
+    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix, plot_formats );
   end
 end
