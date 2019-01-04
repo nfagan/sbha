@@ -1,7 +1,9 @@
+function sbha_plot_binned_position_frequency_timecourse()
+
 %%  Config
 
 % Subdirectory of plots/pos_freq_timecourse/<date> in which to save plots.
-base_plot_subdirectory = '1';
+base_plot_subdirectory = 'c-nc';
 
 % Prefix each figure file with this string.
 base_plot_prefix = '';
@@ -64,8 +66,8 @@ mask = fcat.mask( pltlabs ...
   , @find, {'correct-true'} ...
 );
 
+fcats = { 'conscious-type', 'monkey', 'task-type', 'congruency' };
 pcats = { 'cue-target-direction', 'n-targets', 'conscious-type', 'monkey' };
-fcats = { 'conscious-type', 'monkey', 'task-type' };
 
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
@@ -84,7 +86,13 @@ if ( should_save_plots )
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix );
+    filename = dsp3.req_savefig( figs(i), full_plot_p, filename_labs ...
+      , fcats, plot_filename_prefix );
+    
+    identifiers = combs( select_labs, 'identifier', I{i} );
+    file_contents = strjoin( identifiers, '\n' );
+    
+    shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
 
@@ -109,7 +117,7 @@ mask = fcat.mask( pltlabs ...
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
 
-fcats = { 'monkey', 'conscious-type', 'task-type' };
+fcats = { 'monkey', 'conscious-type', 'task-type', 'congruency' };
 pcats = { 'n-targets', 'conscious-type', 'monkey' };
 
 [figs, axs, I] = pl.figures( @imagesc, select_data, select_labs, fcats, pcats );
@@ -121,11 +129,17 @@ shared_utils.plot.xlabel( axs(1), 'Normalized position ');
 shared_utils.plot.add_horizontal_lines( axs, plot_lines, 'r--' );
 shared_utils.plot.fullscreen( figs );
 
-if ( should_save_plots )
+if ( should_save_plots )  
   full_plot_p = fullfile( plot_p, plot_subdirectory );
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix );
+    filename = dsp3.req_savefig( figs(i), full_plot_p, filename_labs ...
+      , fcats, plot_filename_prefix );
+    
+    identifiers = combs( select_labs, 'identifier', I{i} );
+    file_contents = strjoin( identifiers, '\n' );
+    
+    shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
