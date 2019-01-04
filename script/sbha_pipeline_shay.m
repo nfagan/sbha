@@ -31,8 +31,9 @@ sbha.make_edf_events( inputs );
 
 %%
 
-sbha.make_edf_trials( inputs ...
-  , 'event_name', 'cue_onset' ...
-  , 'look_back', -200 ...
-  , 'look_ahead', 1666 ...
-);
+timing_inputs = struct();
+timing_inputs.look_back = -200;
+timing_inputs.look_ahead = 1666;
+
+sbha.make_edf_trials( inputs, timing_inputs, 'event_name', 'cue_onset' );
+sbha.make_edf_trials( inputs, timing_inputs, 'event_name', 'target_onset' );

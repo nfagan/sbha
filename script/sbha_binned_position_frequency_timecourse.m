@@ -15,39 +15,24 @@ un_file = shared_utils.general.get( files, 'unified' );
 labs = fcat.from( labels_file );
 key = edf_trials_file.key;
 identifier = edf_events_file.identifier;
+is_rt_task = strcmp( labs('task-type'), 'rt' );
 
 x = squeeze( edf_trials_file.aligned(:, :, key('x')) );
 y = squeeze( edf_trials_file.aligned(:, :, key('y')) );
 t = edf_trials_file.t;
-look_back = edf_trials_file.params.look_back;
 
-events = edf_events_file.events;
-event_key = edf_events_file.event_key;
+mask_time = nan;
+targ_time = nan;
 
-stim = un_file.opts.STIMULI;
+if ( is_rt_task )
+  task_timings = un_file.opts.TIMINGS.time_in;
 
-left_image_setup = stim.setup.left_image1;
-left_image_obj = un_file.opts.STIMULI.left_image1;
-right_image_obj = un_file.opts.STIMULI.right_image1;
+  mask_time = task_timings.rt_present_targets;
+  targ_time = task_timings.pre_mask_delay + mask_time;
 
-choice_time = left_image_setup.target_duration * 1e3;
-
-mask_onset = round( events(:, event_key('mask_onset')) );
-cue_onset = round( events(:, event_key('cue_onset')) );
-targ_onset = round( events(:, event_key('rt_target_onset')) );
-targ_acquired = round( events(:, event_key('target_acquired')) );
-
-mask_delay_time = mask_onset - cue_onset - look_back;
-targ_delay_time = targ_onset - cue_onset - look_back;
-targ_acq_delay_time = targ_acquired - cue_onset - choice_time - look_back;
-
-task_timings = un_file.opts.TIMINGS.time_in;
-
-mask_time = task_timings.rt_present_targets;
-targ_time = task_timings.pre_mask_delay + mask_time;
-
-mask_time = round( mask_time * 1e3 );
-targ_time = round( targ_time * 1e3 );
+  mask_time = round( mask_time * 1e3 );
+  targ_time = round( targ_time * 1e3 );
+end
 
 screen_size = un_file.opts.WINDOW.rect;
 
@@ -57,9 +42,14 @@ max_x = screen_size(3);
 norm_func = @(x, min, max) (x - min) ./ (max-min);
 norm_x = norm_func( x, min_x, max_x );
 
-% sbha.label.rt_cue_direction( labs );
-sbha.label.rt_cue_target_direction( labs );
-sbha.label.rt_n_targets( labs );
+if ( is_rt_task )
+  sbha.label.rt_cue_target_direction( labs );
+  sbha.label.rt_n_targets( labs );
+else
+  sbha.label.cnc_cue_target_direction( labs );
+  sbha.label.cnc_n_targets( labs );
+end
+
 sbha.label.monkey_from_subject( labs );
 
 if ( params.use_trial_selection_criterion )
@@ -79,7 +69,7 @@ for i = 1:2
 %     right_trials = find( labs, {'right-cue', 'right-target'} );
 %     use_x(right_trials, :) = 1 - use_x(right_trials, :);
 
-    left_trials = find( labs, {'left-cue', 'left-target'} );
+    left_trials = findor( labs, {'left-cue', 'left-target'} );
     use_x(left_trials, :) = 1 - use_x(left_trials, :);
     
     setcat( use_labs, collapsed_dir_cat, sprintf('%s-true', collapsed_dir_cat) );
@@ -183,3 +173,20 @@ for i = 1:rows(x)
 end
 
 end
+
+% stim = un_file.opts.STIMULI;
+% 
+% left_image_setup = stim.setup.left_image1;
+% left_image_obj = un_file.opts.STIMULI.left_image1;
+% right_image_obj = un_file.opts.STIMULI.right_image1;
+% 
+% choice_time = left_image_setup.target_duration * 1e3;
+% 
+% mask_onset = round( events(:, event_key('mask_onset')) );
+% cue_onset = round( events(:, event_key('cue_onset')) );
+% targ_onset = round( events(:, event_key('rt_target_onset')) );
+% targ_acquired = round( events(:, event_key('target_acquired')) );
+% 
+% mask_delay_time = mask_onset - cue_onset - look_back;
+% targ_delay_time = targ_onset - cue_onset - look_back;
+% targ_acq_delay_time = targ_acquired - cue_onset - choice_time - look_back;

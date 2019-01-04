@@ -1,7 +1,7 @@
 %%  Config
 
 % Subdirectory of plots/pos_freq_timecourse/<date> in which to save plots.
-base_plot_subdirectory = 'hitch';
+base_plot_subdirectory = '1';
 
 % Prefix each figure file with this string.
 base_plot_prefix = '';
@@ -27,6 +27,7 @@ outs = sbha_run_binned_position_frequency_timecourse( ...
    , 'time_window_size', 10 ... % ms
    , 'position_window_size', 0.01 ... % normalized units [0, 1]
    , 'use_trial_selection_criterion', use_trial_selection_criterion ...
+   , 'event_name', 'cue_onset' ...
    , 'is_parallel', true ...
 );
 
@@ -59,13 +60,12 @@ pltlabs = labs';
 pltdat = fliplr( counts );
 
 mask = fcat.mask( pltlabs ...
-  , @find, 'rt' ... % rt task only
   , @find, {'made-selection-true', 'collapsed-cue-direction-false'} ...
   , @find, {'correct-true'} ...
 );
 
 pcats = { 'cue-target-direction', 'n-targets', 'conscious-type', 'monkey' };
-fcats = { 'conscious-type', 'monkey' };
+fcats = { 'conscious-type', 'monkey', 'task-type' };
 
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
@@ -102,7 +102,6 @@ pltlabs = labs';
 pltdat = fliplr( counts );
 
 mask = fcat.mask( pltlabs ...
-  , @find, 'rt' ... % rt task only
   , @find, {'made-selection-true', 'collapsed-cue-direction-true'} ...
   , @find, {'correct-true'} ...
 );
@@ -110,7 +109,7 @@ mask = fcat.mask( pltlabs ...
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
 
-fcats = { 'monkey', 'conscious-type' };
+fcats = { 'monkey', 'conscious-type', 'task-type' };
 pcats = { 'n-targets', 'conscious-type', 'monkey' };
 
 [figs, axs, I] = pl.figures( @imagesc, select_data, select_labs, fcats, pcats );

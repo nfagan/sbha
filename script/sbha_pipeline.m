@@ -2,7 +2,7 @@ inputs = struct();
 
 %%
 
-subdirs = { '122718_Hitch_nonCosc_13ms' };
+subdirs = {};
 
 sbha.make_unified( subdirs, inputs );
 
