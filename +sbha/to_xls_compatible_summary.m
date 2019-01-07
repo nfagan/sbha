@@ -109,8 +109,12 @@ else
 end
 
 trial_type = unified_file.opts.STRUCTURE.trial_type;
-
 trial_data = unified_file.DATA;
+rt_target_field = 'rt_correct_direction';
+
+if ( isfield(trial_data, rt_target_field) )
+  scalar_fields{end+1} = rt_target_field;
+end
 
 ncols = numel( scalar_fields ) + 3;
 nrows = numel( trial_data ) + 1;
