@@ -1,10 +1,12 @@
+function sbha_plot_binned_position_frequency_timecourse_shay()
+
 %%  Config
 
 % Subdirectory of plots/pos_freq_timecourse/<date> in which to save plots.
-base_plot_subdirectory = 'ephron';
+base_plot_subdirectory = 'nf-test';
 
 % Prefix each figure file with this string.
-base_plot_prefix = 'ephron_NC';
+base_plot_prefix = 'tarantino_NC';
 
 % Plot formates
 plot_formats = { 'png', 'svg', 'epsc', 'fig' };
@@ -15,21 +17,27 @@ should_save_plots = true;
 % Where to draw horizontal dotted lines on the spectra, in ms.
 horz_lines = [ 0, 17, 650 ];
 
+% Whether task is rt task
+is_rt_task = true;
+
 % Whether to use excel trial criteria
 use_trial_selection_criterion = false;
 
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {'nc-congruent-twotarg-03-Dec-2018 16_27_28'; 'nc-congruent-twotarg-03-Dec-2018 16_14_54'};
+files_containing = {'nc-congruent-twotarg-29-Dec-2018 16_04_55';'nc-congruent-twotarg-29-Dec-2018 17_23_11'};
 
 %%  bin position frequencies over time
+
+event_name = ternary( is_rt_task, 'cue_onset', 'target_onset' );
 
 outs = sbha_run_binned_position_frequency_timecourse( ...
      'files_containing', files_containing ... 
    , 'time_window_size', 10 ... % ms
    , 'position_window_size', 0.01 ... % normalized units [0, 1]
    , 'use_trial_selection_criterion', use_trial_selection_criterion ...
+   , 'event_name', event_name ...
    , 'is_parallel', true ...
 );
 
@@ -62,13 +70,12 @@ pltlabs = labs';
 pltdat = fliplr( counts );
 
 mask = fcat.mask( pltlabs ...
-  , @find, 'rt' ... % rt task only
   , @find, {'made-selection-true', 'collapsed-cue-direction-false'} ...
   , @find, {'correct-true'} ...
 );
 
+fcats = { 'conscious-type', 'monkey', 'task-type', 'congruency' };
 pcats = { 'cue-target-direction', 'n-targets', 'conscious-type', 'monkey' };
-fcats = { 'conscious-type', 'monkey' };
 
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
@@ -87,7 +94,13 @@ if ( should_save_plots )
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix, plot_formats );
+    filename = dsp3.req_savefig( figs(i), full_plot_p, filename_labs ...
+      , fcats, plot_filename_prefix );
+    
+    identifiers = combs( select_labs, 'identifier', I{i} );
+    file_contents = strjoin( identifiers, '\n' );
+    
+    shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
 
@@ -105,7 +118,6 @@ pltlabs = labs';
 pltdat = fliplr( counts );
 
 mask = fcat.mask( pltlabs ...
-  , @find, 'rt' ... % rt task only
   , @find, {'made-selection-true', 'collapsed-cue-direction-true'} ...
   , @find, {'correct-true'} ...
 );
@@ -113,7 +125,7 @@ mask = fcat.mask( pltlabs ...
 select_data = pltdat(mask, :, x_ind);
 select_labs = pltlabs(mask);
 
-fcats = { 'monkey', 'conscious-type' };
+fcats = { 'monkey', 'conscious-type', 'task-type', 'congruency' };
 pcats = { 'n-targets', 'conscious-type', 'monkey' };
 
 [figs, axs, I] = pl.figures( @imagesc, select_data, select_labs, fcats, pcats );
@@ -125,11 +137,17 @@ shared_utils.plot.xlabel( axs(1), 'Normalized position ');
 shared_utils.plot.add_horizontal_lines( axs, plot_lines, 'r--' );
 shared_utils.plot.fullscreen( figs );
 
-if ( should_save_plots )
+if ( should_save_plots )  
   full_plot_p = fullfile( plot_p, plot_subdirectory );
   
   for i = 1:numel(figs)
     filename_labs = prune( select_labs(I{i}) );
-    dsp3.req_savefig( figs(i), full_plot_p, filename_labs, fcats, plot_filename_prefix, plot_formats );
+    filename = dsp3.req_savefig( figs(i), full_plot_p, filename_labs ...
+      , fcats, plot_filename_prefix );
+    
+    identifiers = combs( select_labs, 'identifier', I{i} );
+    file_contents = strjoin( identifiers, '\n' );
+    
+    shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
