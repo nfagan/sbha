@@ -3,16 +3,16 @@ function sbha_plot_binned_position_frequency_timecourse()
 %%  Config
 
 % Subdirectory of plots/pos_freq_timecourse/<date> in which to save plots.
-base_plot_subdirectory = 'c-nc';
+base_plot_subdirectory = 'Hitch';
 
 % Prefix each figure file with this string.
-base_plot_prefix = '';
+base_plot_prefix = 'Hitch_NC_7ms_Dec15';
 
 % Whether to save plots
 should_save_plots = true;
 
 % Where to draw horizontal dotted lines on the spectra, in ms.
-horz_lines = [ 0, 250, 667 ];
+horz_lines = [ 0, 7, 660 ];
 
 % Whether to use excel trial criteria
 use_trial_selection_criterion = false;
@@ -20,7 +20,7 @@ use_trial_selection_criterion = false;
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {};
+files_containing = {'nc-congruent-twotarg-15-Dec-2018 10_18_47';'nc-congruent-twotarg-15-Dec-2018 10_50_01'};
 
 %%  bin position frequencies over time
 
