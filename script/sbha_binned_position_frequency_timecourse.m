@@ -100,50 +100,21 @@ end
 
 function labs = get_trial_selection_criterion(labs, identifier, conf)
 
-identifier_sans_ext = strrep( identifier, '.mat', '' );
+selection_filename = sbha.util.get_trial_selection_criterion_filename( identifier );
+use_trial_index = sbha.util.get_trial_selection_criterion( selection_filename, conf );
+add_is_trial_selected_labels( labs, use_trial_index );
 
-selection_filename = sprintf( 'TRIALS_%s.xlsx', identifier_sans_ext );
+end
 
-selection_dir = fullfile( sbha.dataroot(conf), 'misc', 'position_frequency_trial_selection' );
-selection_file = fullfile( selection_dir, selection_filename );
+function add_is_trial_selected_labels(labs, use_trial)
 
 selection_cat = 'rt-is-trial-selected';
 addsetcat( labs, selection_cat, sprintf('%s-false', selection_cat) );
 
-if ( ~shared_utils.io.fexists(selection_file) )
-  error( 'No such file: "%s".', selection_file );
-end
-
-[xls, header] = xlsread( selection_file );
-
-[selected_trials, use_trial_index] = parse_trial_selection_excel_file( xls, header );
-
-add_is_trial_selected_labels( labs, selection_cat, selected_trials, use_trial_index );
-
-
-end
-
-function [selected_trials, use_trial_index] = parse_trial_selection_excel_file(xls, header)
-
-test_func = @(x, y) ~isempty( strfind(lower(x), y) );
-
-is_trial_col = cellfun( @(x) test_func(x, 'trial'), header );
-is_include_col = cellfun( @(x) test_func(x, 'include'), header );
-
-assert( all(xor(is_trial_col, is_include_col)), 'Invalid header: "%s".' ...
-  , strjoin(header, ' | ') );
-
-selected_trials = xls(:, is_trial_col);
-use_trial_index = xls(:, is_include_col);
-
-end
-
-function add_is_trial_selected_labels(labs, selection_cat, selected_trials, use_trial)
-
 labs_made_select = find( labs, 'made-selection-true' );
 
 n_labs_made_select = numel( labs_made_select );
-n_selected = numel( selected_trials );
+n_selected = numel( use_trial );
 
 assert( n_labs_made_select == n_selected, 'Selected trials do not match.' );
 assert( all(ismember(use_trial, [0, 1])), 'Trial selection crit is not a logical mask.' );

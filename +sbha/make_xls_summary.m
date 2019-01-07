@@ -11,7 +11,7 @@ conf = params.config;
 loop_runner = sbha.get_looped_make_runner( params );
 
 loop_runner.input_directories = sbha.gid( 'unified', conf );
-loop_runner.output_directory = fullfile( sbha.dataroot(conf), 'xls' );
+loop_runner.output_directory = fullfile( sbha.dataroot(conf), 'xls', 'trial_data' );
 loop_runner.save_func = get_save_func( params.format );
 loop_runner.func_name = mfilename;
 loop_runner.get_filename_func = get_filename_func( params.format );
