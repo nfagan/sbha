@@ -21,7 +21,7 @@ horz_lines = [ 0, 17, 650 ];
 is_rt_task = true;
 
 % Whether to use excel trial criteria
-use_trial_selection_criterion = false;
+use_trial_selection_criterion = true;
 
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
@@ -69,7 +69,15 @@ pl.panel_order = { 'n-targets-1', 'n-targets-2' };
 pltlabs = labs';
 pltdat = fliplr( counts );
 
-mask = fcat.mask( pltlabs ...
+if ( use_trial_selection_criterion )
+  % Only trials that were selected
+  mask = find( pltlabs, 'rt-is-trial-selected-true' );
+else
+  % All trials
+  mask = rowmask( pltlabs );
+end
+
+mask = fcat.mask( pltlabs, mask ...
   , @find, {'made-selection-true', 'collapsed-cue-direction-false'} ...
   , @find, {'correct-true'} ...
 );
@@ -117,7 +125,15 @@ pl.panel_order = { 'n-targets-1', 'n-targets-2' };
 pltlabs = labs';
 pltdat = fliplr( counts );
 
-mask = fcat.mask( pltlabs ...
+if ( use_trial_selection_criterion )
+  % Only trials that were selected
+  mask = find( pltlabs, 'rt-is-trial-selected-true' );
+else
+  % All trials
+  mask = rowmask( pltlabs );
+end
+
+mask = fcat.mask( pltlabs, mask ...
   , @find, {'made-selection-true', 'collapsed-cue-direction-true'} ...
   , @find, {'correct-true'} ...
 );

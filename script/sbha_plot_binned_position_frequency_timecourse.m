@@ -9,13 +9,13 @@ base_plot_subdirectory = 'c-nc';
 base_plot_prefix = '';
 
 % Whether to save plots
-should_save_plots = true;
+should_save_plots = false;
 
 % Where to draw horizontal dotted lines on the spectra, in ms.
 horz_lines = [ 0, 250, 667 ];
 
 % Whether to use excel trial criteria
-use_trial_selection_criterion = false;
+use_trial_selection_criterion = true;
 
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
