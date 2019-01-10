@@ -9,5 +9,7 @@ folders = shared_utils.io.dirnames( raw_data_p, 'folders' );
 
 sbha.make_unified( folders, params );
 sbha.make_xls_summary( params );
+sbha.make_xls_eye_traces( params, 'event_name', 'cue_onset', 'bin_size', 10 );
+sbha.make_xls_eye_traces( params, 'event_name', 'target_onset', 'bin_size', 10 );
 
 end

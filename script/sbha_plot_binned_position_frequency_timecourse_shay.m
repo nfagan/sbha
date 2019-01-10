@@ -26,7 +26,7 @@ use_trial_selection_criterion = true;
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {'nc-congruent-twotarg-28-Dec-2018 17_08_48';'nc-congruent-twotarg-28-Dec-2018 16_11_57'};
+files_containing = {'nc-congruent-twotarg-28-Dec-2018 17_08_48';'nc-congruent-twotarg-28-Dec-2018 16_11_57'}; 
 
 %%  bin position frequencies over time
 

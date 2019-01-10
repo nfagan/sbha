@@ -28,6 +28,7 @@ sbha.make_edfs( inputs );
               
 sbha.make_events( inputs );
 sbha.make_edf_events( inputs );
+sbha.make_edf_sync( inputs );
 
 %%
 

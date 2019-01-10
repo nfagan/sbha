@@ -15,7 +15,7 @@ output = fullfile( data_root, 'xls', 'eye_data' );
 
 loop_runner.input_directories = inputs;
 loop_runner.output_directory = output;
-loop_runner.get_filename_func = @(x) strrep( x, '.mat', '.xls' );
+loop_runner.get_filename_func = @(x) strrep( x, '.mat', '.xlsx' );
 loop_runner.save_func = @save_xls_file;
 loop_runner.func_name = mfilename;
 
