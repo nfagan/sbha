@@ -8,7 +8,7 @@ inputs.files_containing = {};
 subdirs = shared_utils.io.dirnames( fullfile(sbha.dataroot(), 'raw'), 'folders' );
 % subdirs = { '122918_tarantino' };
 
-sbha.make_unified( subdirs, inputs );
+sbha.make_unified( subdirs, struct() );
 
 %%
 

@@ -6,7 +6,7 @@ function sbha_plot_binned_position_frequency_timecourse_shay()
 base_plot_subdirectory = 'taranino';
 
 % Prefix each figure file with this string.
-base_plot_prefix = 'tarantino_consc_Dec17';
+base_plot_prefix = 'tarantino_NC_Dec29_17MS';
 
 % Plot formates
 plot_formats = { 'png', 'svg', 'epsc', 'fig' };
@@ -15,7 +15,7 @@ plot_formats = { 'png', 'svg', 'epsc', 'fig' };
 should_save_plots = true;
 
 % Where to draw horizontal dotted lines on the spectra, in ms.
-horz_lines = [ 0, 250, 666 ];
+horz_lines = [ 0, 17, 667 ];
 
 % Whether task is rt task
 is_rt_task = true;
@@ -26,7 +26,7 @@ use_trial_selection_criterion = true;
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {'nc-congruent-twotarg-28-Dec-2018 17_08_48';'nc-congruent-twotarg-28-Dec-2018 16_11_57'}; 
+files_containing = {'nc-congruent-twotarg-29-Dec-2018 16_04_55';'nc-congruent-twotarg-29-Dec-2018 17_23_11'}; 
 
 %%  bin position frequencies over time
 
