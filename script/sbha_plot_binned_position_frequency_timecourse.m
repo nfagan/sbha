@@ -15,12 +15,13 @@ should_save_plots = false;
 horz_lines = [ 0, 7, 660 ];
 
 % Whether to use excel trial criteria
-use_trial_selection_criterion = true;
+use_trial_selection_criterion = false;
 
 % Restrict input files to those containing string(s). Leave empty: {} to
 % include all files.
 % files_containing = { '28-Dec-2018' };
-files_containing = {'nc-congruent-twotarg-15-Dec-2018 10_18_47';'nc-congruent-twotarg-15-Dec-2018 10_50_01'};
+% files_containing = {'nc-congruent-twotarg-15-Dec-2018 10_18_47';'nc-congruent-twotarg-15-Dec-2018 10_50_01'};
+files_containing = {'nc-congruent-twotarg-27-Dec-2018 15_15_19.mat'; 'nc-congruent-twotarg-28-Dec-2018 09_45_18.mat' };
 
 %%  bin position frequencies over time
 
@@ -31,6 +32,9 @@ outs = sbha_run_binned_position_frequency_timecourse( ...
    , 'use_trial_selection_criterion', use_trial_selection_criterion ...
    , 'event_name', 'cue_onset' ...
    , 'is_parallel', true ...
+   , 'normalize_to', 'adjusted-cues' ...
+   , 'lr_normalization_time_window', [400, 450] ...
+   , 'position_padding', 0.2 ...
 );
 
 if ( ~isempty(outs) )
@@ -46,6 +50,8 @@ if ( ~isempty(outs) )
 
   plot_p = fullfile( sbha.dataroot(), 'plots', 'pos_freq_timecourse' ...
     , datestr(now, 'mmddyy'), base_plot_subdirectory );
+else
+  error( 'No files matched: "%s".', strjoin(files_containing, ' | ') );
 end
 
 %%  plot each direction individually

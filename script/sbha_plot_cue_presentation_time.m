@@ -1,6 +1,13 @@
 conf = sbha.config.load();
 
-out = sbha_check_cue_presentation_time( 'config', conf );
+files = {};
+prefix = '';
+do_save = true;
+
+out = sbha_check_cue_presentation_time( ...
+    'config', conf ...
+  , 'files_containing', files ...
+);
 
 labels = out.labels';
 cue_durations = out.presentation_duration;
@@ -12,13 +19,10 @@ plot_p = fullfile( sbha.dataroot(conf), 'plots' ...
 
 %%
 
-prefix = '';
-do_save = true;
 pcats = { 'identifier', 'task-type', 'conscious-type' };
 
 mask = fcat.mask( labels ...
   , @find, 'made-selection-true' ...
-  , @find, 'nonconscious' ...
 );
 
 I = findall( labels, 'identifier', mask );

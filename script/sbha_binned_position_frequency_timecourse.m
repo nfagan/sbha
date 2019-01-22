@@ -5,7 +5,16 @@ defaults = sbha_binned_position_frequency_timecourse_defaults();
 params = sbha.parsestruct( defaults, varargin );
 
 event_name = params.event_name;
+norm_to = validatestring( params.normalize_to, {'screen', 'cues', 'adjusted-cues'} ...
+  , mfilename, 'normalize_to' );
+match_time_window = params.lr_normalization_time_window;
+
 conf = params.config;
+  
+if ( strcmp(norm_to, 'adjusted-cues') )
+  validateattributes( match_time_window, {'numeric'}, {'numel', 2} ...
+    , mfilename, 'lr_normalization_time_window' );
+end
 
 edf_events_file = shared_utils.general.get( files, 'edf_events' );
 edf_trials_file = shared_utils.general.get( files, event_name );
@@ -34,14 +43,37 @@ if ( is_rt_task )
   targ_time = round( targ_time * 1e3 );
 end
 
-screen_size = un_file.opts.WINDOW.rect;
+% Calculate (x,y) center of stimulus
+center_func = @(x) [ mean(x.vertices([1, 3])), mean(x.vertices([2, 4])) ];
 
-min_x = screen_size(1);
-max_x = screen_size(3);
+l_image = un_file.opts.STIMULI.left_image1;
+r_image = un_file.opts.STIMULI.right_image1;
+
+l_center = center_func( l_image );
+r_center = center_func( r_image );
+
+switch ( norm_to )
+  case 'screen'
+    screen_size = un_file.opts.WINDOW.rect;
+
+    min_x = screen_size(1);
+    max_x = screen_size(3);
+    
+  case { 'cues', 'adjusted-cues' }
+    min_x = l_center(1);
+    max_x = r_center(1);
+    
+  otherwise
+    error( 'Unrecognized normalization: "%s".', norm_to );
+end
 
 norm_func = @(x, min, max) (x - min) ./ (max-min);
 norm_x = norm_func( x, min_x, max_x );
 
+if ( strcmp(norm_to, 'adjusted-cues') )  
+  norm_x = match_x_across_midline( norm_x, t, match_time_window );
+end
+  
 if ( is_rt_task )
   sbha.label.rt_cue_target_direction( labs );
   sbha.label.rt_n_targets( labs );
@@ -79,9 +111,10 @@ for i = 1:2
 
   time_window_size = params.time_window_size;
   pos_window_size = params.position_window_size;
+  pos_padding = params.position_padding;
 
   [subset_counts, binned_t, edges] = ...
-    get_binned_counts( use_x, t, pos_window_size, time_window_size );
+    get_binned_counts( use_x, t, pos_window_size, time_window_size, pos_padding );
   
   all_counts = [ all_counts; subset_counts ];
   
@@ -125,11 +158,11 @@ setcat( labs, selection_cat, sprintf('%s-true', selection_cat), use_trial_index 
 
 end
 
-function [counts, binned_t, edges] = get_binned_counts(x, t, pos_window, time_window)
+function [counts, binned_t, edges] = get_binned_counts(x, t, pos_window, time_window, padding)
 
 import shared_utils.vector.slidebin;
 
-edges = 0:pos_window:1;
+edges = (0-padding):pos_window:(1+padding);
 
 binned_t = cellfun( @(x) x(1), slidebin(t, time_window, time_window) );
 counts = nan( rows(x), numel(binned_t), numel(edges) );
@@ -142,6 +175,26 @@ for i = 1:rows(x)
     counts(i, j, :) = histc( binned_x{j}, edges );
   end
 end
+
+end
+
+function adjusted_x = match_x_across_midline(x, t, time_window)
+
+adjusted_x = nan( size(x) );
+
+is_within_time = t >= time_window(1) & t <= time_window(2);
+is_left = x < 0.5;
+is_right = x >= 0.5;
+
+is_norm_left = is_within_time & is_left;
+is_norm_right = is_within_time & is_right;
+
+left_adjust = nanmean( x(is_norm_left) );
+right_adjust = nanmean( x(is_norm_right) ) - 1;
+
+adjusted_x(is_left) = x(is_left) - left_adjust;
+adjusted_x(is_right) = x(is_right) - right_adjust;
+
 
 end
 
