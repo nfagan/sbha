@@ -43,7 +43,7 @@ if ( is_rt_task )
   targ_time = round( targ_time * 1e3 );
 end
 
-% Calculate (x,y) center of stimulus
+% Calculate (x, y) center of stimulus
 center_func = @(x) [ mean(x.vertices([1, 3])), mean(x.vertices([2, 4])) ];
 
 l_image = un_file.opts.STIMULI.left_image1;
@@ -97,10 +97,6 @@ for i = 1:2
   use_labs = addcat( labs', collapsed_dir_cat );
   
   if ( i == 1 )
-    % flip congruent-right trials
-%     right_trials = find( labs, {'right-cue', 'right-target'} );
-%     use_x(right_trials, :) = 1 - use_x(right_trials, :);
-
     left_trials = findor( labs, {'left-cue', 'left-target'} );
     use_x(left_trials, :) = 1 - use_x(left_trials, :);
     
@@ -197,20 +193,3 @@ adjusted_x(is_right) = x(is_right) - right_adjust;
 
 
 end
-
-% stim = un_file.opts.STIMULI;
-% 
-% left_image_setup = stim.setup.left_image1;
-% left_image_obj = un_file.opts.STIMULI.left_image1;
-% right_image_obj = un_file.opts.STIMULI.right_image1;
-% 
-% choice_time = left_image_setup.target_duration * 1e3;
-% 
-% mask_onset = round( events(:, event_key('mask_onset')) );
-% cue_onset = round( events(:, event_key('cue_onset')) );
-% targ_onset = round( events(:, event_key('rt_target_onset')) );
-% targ_acquired = round( events(:, event_key('target_acquired')) );
-% 
-% mask_delay_time = mask_onset - cue_onset - look_back;
-% targ_delay_time = targ_onset - cue_onset - look_back;
-% targ_acq_delay_time = targ_acquired - cue_onset - choice_time - look_back;
