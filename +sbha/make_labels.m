@@ -14,8 +14,13 @@ end
 
 function labels_file = make_labels_main(files, params)
 
+import shared_utils.struct.field_or;
+
 trials_file = shared_utils.general.get( files, 'trials' );
 meta_file = shared_utils.general.get( files, 'meta' );
+
+task_type = meta_file.task_type;
+congruency = meta_file.congruency;
 
 trial_dat = trials_file.data;
 n_trials = numel( trial_dat );
@@ -39,6 +44,9 @@ for i = 1:n_trials
     selected_direction = 'none';
   end
   
+  correct_direction = get_correct_direction( ...
+    task_type, congruent_direction, congruency, current_trial );
+  
   randomization_id = meta_file.randomization_id;
   
   init_str = ternary( acq_init, 'initiated-true', 'initiated-false' );
@@ -46,14 +54,16 @@ for i = 1:n_trials
   select_str = ternary( made_selection, 'made-selection-true', 'made-selection-false' );
   selected_direction = sprintf( 'selected-%s', selected_direction );
   congruent_direction = sprintf( 'congruent-%s', congruent_direction );
+  correct_direction = sprintf( 'correct-%s', correct_direction );
   randomization_str = sprintf( 'randomization-%s', randomization_id );
   
   cats = { 'initiated', 'correct', 'made-selection' ...
-    , 'selected-direction', 'congruent-direction', 'randomization' };
+    , 'selected-direction', 'congruent-direction' ...
+    , 'correct-direction', 'randomization' };
   
   tmp_labs = addcat( fcat(), cats );
   setcat( tmp_labs, cats, {init_str, correct_str, select_str ...
-    , selected_direction, congruent_direction, randomization_str} );
+    , selected_direction, congruent_direction, correct_direction, randomization_str} );
   
   append( labs, tmp_labs );
 end
@@ -73,4 +83,39 @@ labels_file.params = params;
 labels_file.labels = categorical( labs );
 labels_file.categories = getcats( labs );
 
+end
+
+function str = get_opposite_direction(congruent_direction)
+
+str = char( setdiff({'left', 'right'}, congruent_direction) );
+
+end
+
+function str = get_correct_direction(task_type, congruent_direction, congruency, current_trial)
+
+is_congruent = strcmp( congruency, 'congruent' );
+
+switch ( task_type )
+  case 'rt'
+    if ( isfield(current_trial, 'rt_correct_direction') )
+      % Newer data embeds the correct direction directly.
+      str = current_trial.rt_correct_direction;
+    else
+      if ( strcmp(congruent_direction, 'two') )
+        % Older two-star trials were erroneously always on the right
+        str = 'right';
+      else
+        % Correct is always incongruent.
+        str = get_opposite_direction( congruent_direction );
+      end
+    end
+  case 'c-nc'
+    if ( is_congruent )
+      str = congruent_direction;
+    else
+      str = get_opposite_direction( congruent_direction );
+    end
+  otherwise
+    error( 'Correct direction not implemented for task type: "%s".', task_type );
+end
 end
