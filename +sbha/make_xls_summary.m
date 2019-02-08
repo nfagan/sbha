@@ -29,6 +29,12 @@ end
 
 function save_xls_file(filename, summary)
 
+try
+  filename = add_subject_to_filename( filename, summary );
+catch err
+  warning( 'Failed to add subject to filename: "%s".', err.message ); %#ok
+end
+
 sheet_names = fieldnames( summary );
 
 for i = 1:numel(sheet_names)
@@ -37,6 +43,18 @@ for i = 1:numel(sheet_names)
   
   xlswrite( filename, sheet, sheet_name );
 end
+
+end
+
+function filename = add_subject_to_filename(filename, summary)
+
+meta_info = summary.meta_info;
+subject = char( meta_info(2, strcmpi(meta_info(1, :), 'subject')) );
+
+[filepath, file, ext] = fileparts( filename );
+file = sprintf( '%s__%s%s', subject, file, ext );
+
+filename = fullfile( filepath, file );
 
 end
 
