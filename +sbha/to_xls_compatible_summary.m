@@ -112,6 +112,8 @@ trial_type = unified_file.opts.STRUCTURE.trial_type;
 trial_data = unified_file.DATA;
 rt_target_field = 'rt_correct_direction';
 
+is_objective_trial_type = strcmp( trial_type, 'objective' );
+
 if ( isfield(trial_data, rt_target_field) )
   scalar_fields{end+1} = rt_target_field;
 end
@@ -126,7 +128,13 @@ summary(1, :) = header;
 
 for i = 1:numel(trial_data)
   for j = 1:numel(scalar_fields)
-    summary{i+1, j} = trial_data(i).(scalar_fields{j});
+    scalar_field = scalar_fields{j};
+    
+    if ( is_objective_trial_type )
+      summary{i+1, j} = get_objective_trial_data( trial_data, scalar_field, i );
+    else
+      summary{i+1, j} = trial_data(i).(scalar_field);
+    end
   end
   
   summary{i+1, j+1} = targ_type;
@@ -138,6 +146,43 @@ rt = get_rt( unified_file );
 rt_cell = arrayfun( @(x) x, rt, 'un', 0 );
 summary(2:end, end+1) = rt_cell;
 summary{1, end} = 'rt';
+
+end
+
+function res = get_objective_trial_data(trial_data, fieldname, trial_number)
+
+res = trial_data(trial_number).(fieldname);
+
+switch ( fieldname )
+  case { 'was_correct', 'selected_direction' }
+    selected_index = trial_data(trial_number).selected_target_index;
+    direction = trial_data(trial_number).direction;
+    
+    if ( strcmp(fieldname, 'was_correct') )
+      res = objective_was_correct( selected_index, direction );
+      
+    elseif ( strcmp(fieldname, 'selected_direction') )
+      if ( isnan(selected_index) )
+        res = '';
+      elseif ( selected_index == 1 )
+        res = 'left';
+      else
+        assert( selected_index == 2, 'Unhandled case: %d.', selected_index );
+        res = 'right';
+      end
+    else
+      error( 'Unhandled case: "%s".', fieldname );
+    end
+end
+
+end
+
+function was_correct = objective_was_correct(selected_index, direction)
+
+correct_left = selected_index == 1 && strcmp( direction, 'left' );
+correct_right = selected_index == 2 && strcmp( direction, 'right' );
+
+was_correct = correct_left || correct_right;
 
 end
 
