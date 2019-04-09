@@ -118,6 +118,14 @@ if ( isfield(trial_data, rt_target_field) )
   scalar_fields{end+1} = rt_target_field;
 end
 
+if ( isfield(trial_data, 'confidence_level') )
+  scalar_fields{end+1} = 'confidence_level';
+end
+
+if ( isfield(trial_data, 'n_star_frames') )
+  scalar_fields{end+1} = 'n_star_frames';
+end
+
 ncols = numel( scalar_fields ) + 3;
 nrows = numel( trial_data ) + 1;
 
