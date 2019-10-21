@@ -1,18 +1,9 @@
-rt_outs = sbha_recalculate_rt_gaze( 'is_parallel', true );
+files = {};
 
-%%
-
-all_rt = [ rt_outs.gaze_rt; rt_outs.original_rt ];
-rt_labs = addcat( rt_outs.labels', 'method' );
-repset( rt_labs, 'method', {'gaze', 'task'} );
-
-mask = fcat.mask( rt_labs ...
-  , @find, {'correct-true'} ...
+rt_outs = sbha_recalculate_rt_gaze( ...
+  'is_parallel', true ...
+  , 'files_containing', files ...
 );
-
-pl = plotlabeled.make_common();
-pl.hist_add_summary_line = true;
-axs = pl.hist( all_rt(mask), rt_labs(mask), {'method', 'day'}, 30 );
 
 %%
 
@@ -25,7 +16,6 @@ rt_labels = rt_outs.labels';
 
 mask = fcat.mask( rt_labels ...
   , @find, 'correct-true' ...
-  , @find, 'nc-congruent-twotarg-21-Feb-2019 16_03_08.mat' ...
 );
 
 difference_rt = abs( trial_rt - rt );
@@ -33,7 +23,7 @@ nan_one_or_other = xor( isnan(trial_rt), isnan(rt) );
 subset_most_different = nan_one_or_other | difference_rt > 100;
 
 do_save = true;
-save_p = fullfile( sbha.dataroot(), 'plots', 'debug-rt' );
+save_p = fullfile( sbha.dataroot(), 'plots', 'debug-rt', datestr(now, 'mmddyy') );
 base_subdir = '';
 
 for i = 1:numel(mask)
@@ -70,3 +60,17 @@ for i = 1:numel(mask)
     dsp3.req_savefig( gcf, full_save_p, prune(rt_labels(trial)), title_cats );
   end
 end
+
+%%
+
+% all_rt = [ rt_outs.gaze_rt; rt_outs.original_rt ];
+% rt_labs = addcat( rt_outs.labels', 'method' );
+% repset( rt_labs, 'method', {'gaze', 'task'} );
+% 
+% mask = fcat.mask( rt_labs ...
+%   , @find, {'correct-true'} ...
+% );
+% 
+% pl = plotlabeled.make_common();
+% pl.hist_add_summary_line = true;
+% axs = pl.hist( all_rt(mask), rt_labs(mask), {'method', 'day'}, 30 );
