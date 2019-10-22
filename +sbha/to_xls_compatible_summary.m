@@ -1,7 +1,7 @@
-function summary = to_xls_compatible_summary(unified_file)
+function summary = to_xls_compatible_summary(unified_file, gaze_rt_file)
 
 summary = struct();
-summary.trial_data = get_trial_data( unified_file );
+summary.trial_data = get_trial_data( unified_file, gaze_rt_file );
 summary.events = get_event_info( unified_file );
 summary.timing_info = get_timing_info( unified_file );
 summary.stimulus_info = get_stimulus_info( unified_file );
@@ -91,7 +91,7 @@ end
 
 end
 
-function summary = get_trial_data(unified_file)
+function summary = get_trial_data(unified_file, gaze_rt_file)
 
 scalar_fields = { 'acquired_initial_fixation', 'was_correct', 'made_selection' ...
   , 'direction', 'selected_direction' };
@@ -152,8 +152,17 @@ end
 
 rt = get_rt( unified_file );
 rt_cell = arrayfun( @(x) x, rt, 'un', 0 );
+
+gaze_rt = gaze_rt_file.gaze_rt / 1e3; % -> seconds.
+
+assert( numel(gaze_rt) == numel(rt) ...
+  , 'Trial and gaze rt do not have the same number of elements.' );
+
 summary(2:end, end+1) = rt_cell;
 summary{1, end} = 'rt';
+
+summary(2:end, end+1) = arrayfun( @(x) x, gaze_rt, 'un', 0 );
+summary{1, end} = 'gaze_rt';
 
 end
 
