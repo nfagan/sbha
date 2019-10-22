@@ -52,19 +52,31 @@ for i = 1:numel(events)
   start_i = t == start;
   stop_i = t == stop;
   
-  assert( nnz(start_i) == 1 && nnz(stop_i) == 1, 'No matching start or stop time.' );
+  assert( nnz(start_i) == 1, 'No matching start time.' );
+  allow_mismatch_size = false;
+  
+  if ( nnz(stop_i) == 0 )
+    if ( stop > max(t) )
+      stop_i = t == max( t );
+      allow_mismatch_size = true;
+    else
+      error( 'No matching stop time.' );
+    end
+  end
   
   num_start_i = find( start_i );
   num_stop_i = find( stop_i );
   
   current_n_t = num_stop_i - num_start_i + 1;
   
-  assert( current_n_t == n_t, 'Stop - start doesn''t match number of samples.' );
+  if ( ~allow_mismatch_size )
+    assert( current_n_t == n_t, 'Stop - start doesn''t match number of samples.' );
+  end
   
   index_vec = num_start_i:num_stop_i;
   
-  aligned(i, :, 1) = x(index_vec);
-  aligned(i, :, 2) = y(index_vec);
+  aligned(i, 1:current_n_t, 1) = x(index_vec);
+  aligned(i, 1:current_n_t, 2) = y(index_vec);
 end
 
 end
