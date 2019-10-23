@@ -154,6 +154,7 @@ rt = get_rt( unified_file );
 rt_cell = arrayfun( @(x) x, rt, 'un', 0 );
 
 gaze_rt = gaze_rt_file.gaze_rt / 1e3; % -> seconds.
+nonconsec_rt = gaze_rt_file.nonconsecutive_trial_rt / 1e3;  % -> seconds.
 
 assert( numel(gaze_rt) == numel(rt) ...
   , 'Trial and gaze rt do not have the same number of elements.' );
@@ -163,6 +164,9 @@ summary{1, end} = 'rt';
 
 summary(2:end, end+1) = arrayfun( @(x) x, gaze_rt, 'un', 0 );
 summary{1, end} = 'gaze_rt';
+
+summary(2:end, end+1) = arrayfun( @(x) x, nonconsec_rt, 'un', 0 );
+summary{1, end} = 'nonconsecutive_trial_rt';
 
 end
 

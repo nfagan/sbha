@@ -16,10 +16,12 @@ assert_ispair( y, labels );
 
 left_rect = left_target_bounds( unified_file );
 right_rect = right_target_bounds( unified_file );
+target_dur = target_duration( unified_file );
 
 mask = findor( labels, {'selected-left', 'selected-right'} );
 
 rt = nan( rows(x), 1 );
+nonconsec_rt = nan( size(rt) );
 
 for i = 1:numel(mask)  
   j = mask(i);
@@ -34,6 +36,7 @@ for i = 1:numel(mask)
   );
   
   rt(j) = one_trial( x_, y_, start_stops, t, choice_direction, left_rect, right_rect, params );
+  nonconsec_rt(j) = one_trial_non_consecutive( x_, y_, t, target_dur, choice_direction, left_rect, right_rect, params );
 end
 
 compare_rt = columnize( [unified_file.DATA.rt] ) * 1e3;  % to ms.
@@ -42,6 +45,7 @@ out = struct();
 out.identifier = unified_file.identifier;
 out.gaze_rt = rt;
 out.original_rt = compare_rt;
+out.nonconsecutive_trial_rt = nonconsec_rt;
 out.x = x;
 out.y = y;
 out.t = t;
@@ -56,25 +60,6 @@ function labels = make_labels(labels_file)
 labels = fcat.from( labels_file );
 trials = arrayfun( @(x) sprintf('trial-%d', x), 1:rows(labels), 'un', 0 );
 addsetcat( labels, 'trial-number', trials );
-
-end
-
-function compare_rts(gaze, mat, labels)
-
-gaze_labs = addsetcat( labels', 'method', 'gaze' );
-task_labs = addsetcat( labels', 'method', 'task' );
-
-rt = [ gaze; mat ];
-append( gaze_labs, task_labs );
-
-pl = plotlabeled.make_common();
-pl.hist_add_summary_line = true;
-
-mask = findnone( gaze_labs, 'selected-none' );
-
-axs = pl.hist( rt(mask), gaze_labs(mask), {'method', 'congruency', 'selected-direction'}, 20 );
-
-d = 10;
 
 end
 
@@ -122,6 +107,26 @@ end
 
 end
 
+function rt = one_trial_non_consecutive(x, y, t, target_duration, choice_direction, left_bounds, right_bounds, params)
+
+is_left = strcmp( choice_direction, 'left' );
+
+if ( is_left )
+  crit = cumsum( bfw.bounds.rect(x, y, left_bounds) );
+else
+  crit = cumsum( bfw.bounds.rect(x, y, right_bounds) );
+end
+
+ind = find( crit >= target_duration, 1 );
+
+if ( isempty(ind) )
+  rt = nan;
+else
+  rt = t(ind) - target_duration + 1;
+end
+
+end
+
 function [rt, tf] = check_in_bounds_zero_case(t, first_ib_left, first_ib_right, left_choice)
 
 is_first_left = ~isempty( first_ib_left ) && ...
@@ -150,6 +155,12 @@ function [rt, tf] = check_saccade_case(start_stops, ib_left, ib_right, is_left, 
 
 end
 
+function t = target_duration(unified_file)
+
+t = unified_file.opts.STIMULI.setup.left_image1.target_duration * 1e3; %  -> ms;
+
+end
+
 function r = right_target_bounds(unified_file)
 
 right_target = unified_file.opts.STIMULI.right_image1.targets{1};
@@ -174,5 +185,24 @@ match_ind = cellfun( @(x) contains(selected_dir, x), directions );
 assert( nnz(match_ind) == 1, 'Expected 1 direction to match for "%s".', selected_dir );
 
 c = directions(match_ind);
+
+end
+
+function compare_rts(gaze, mat, labels)
+
+gaze_labs = addsetcat( labels', 'method', 'gaze' );
+task_labs = addsetcat( labels', 'method', 'task' );
+
+rt = [ gaze; mat ];
+append( gaze_labs, task_labs );
+
+pl = plotlabeled.make_common();
+pl.hist_add_summary_line = true;
+
+mask = findnone( gaze_labs, 'selected-none' );
+
+axs = pl.hist( rt(mask), gaze_labs(mask), {'method', 'congruency', 'selected-direction'}, 20 );
+
+d = 10;
 
 end
