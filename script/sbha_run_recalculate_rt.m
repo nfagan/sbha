@@ -1,4 +1,5 @@
-files = {};
+% files = {};
+files = 'nc-congruent-twotarg-22-Feb-2019 12_13_38.mat';
 
 rt_outs = sbha_recalculate_rt_gaze( ...
   'is_parallel', true ...

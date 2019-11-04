@@ -7,11 +7,6 @@ function p = dataroot(conf)
 %
 %     p = ... dataroot( conf ) uses the config file `conf` instead of the
 %     saved config file.
-%
-%     IN:
-%       - `conf` (config file) |OPTIONAL|
-%     OUT:
-%       - `p` (char)
 
 if ( nargin < 1 || isempty(conf) )
   conf = sbha.config.load();

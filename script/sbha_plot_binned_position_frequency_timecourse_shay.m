@@ -28,6 +28,9 @@ use_trial_selection_criterion = true;
 % files_containing = { '28-Dec-2018' };
 files_containing = {'nc-congruent-twotarg-29-Dec-2018 16_04_55';'nc-congruent-twotarg-29-Dec-2018 17_23_11'}; 
 
+% Set axes color limits, or leave empty ([]) to set automatically.
+color_limits = [];
+
 %%  bin position frequencies over time
 
 event_name = ternary( is_rt_task, 'cue_onset', 'target_onset' );
@@ -99,6 +102,10 @@ shared_utils.plot.xlabel( axs(1), 'Normalized position ');
 shared_utils.plot.add_horizontal_lines( axs, plot_lines, 'r--' );
 shared_utils.plot.fullscreen( figs );
 
+if ( ~isempty(color_limits) )
+  shared_utils.plot.set_clims( axs, color_limits );
+end
+
 if ( should_save_plots )  
   full_plot_p = fullfile( plot_p, plot_subdirectory );
   
@@ -154,6 +161,10 @@ shared_utils.plot.ylabel( axs(1), 'Time from cue onset (ms)' );
 shared_utils.plot.xlabel( axs(1), 'Normalized position ');
 shared_utils.plot.add_horizontal_lines( axs, plot_lines, 'r--' );
 shared_utils.plot.fullscreen( figs );
+
+if ( ~isempty(color_limits) )
+  shared_utils.plot.set_clims( axs, color_limits );
+end
 
 if ( should_save_plots )  
   full_plot_p = fullfile( plot_p, plot_subdirectory );

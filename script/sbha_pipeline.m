@@ -31,8 +31,8 @@ sbha.make_edf_trials( inputs ...
 
 %%
 
-inputs = struct();
-inputs.overwrite = true;
+% inputs = struct();
+% inputs.overwrite = true;
 
 sbha.make_edf_trials( inputs ...
   , 'event_name', 'rt_target_onset' ...
