@@ -67,7 +67,7 @@ switch ( norm_to )
     error( 'Unrecognized normalization: "%s".', norm_to );
 end
 
-norm_func = @(x, min, max) (x - min) ./ (max-min);
+norm_func = @(x, min, max) (x - min) ./ (max - min);
 norm_x = norm_func( x, min_x, max_x );
 
 if ( strcmp(norm_to, 'adjusted-cues') )  
@@ -87,6 +87,8 @@ sbha.label.monkey_from_subject( labs );
 if ( params.use_trial_selection_criterion )
   get_trial_selection_criterion( labs, identifier, conf );
 end
+
+[norm_roi_left, norm_roi_right] = get_normalized_cue_rois( l_image, r_image, min_x, max_x );
 
 all_counts = [];
 all_labs = fcat();
@@ -124,6 +126,19 @@ outs.counts_t = binned_t;
 outs.labels = all_labs;
 outs.edges = edges;
 outs.event_indices = [ mask_time, targ_time ];
+outs.norm_roi_left = repmat( norm_roi_left, rows(all_labs), 1 );
+outs.norm_roi_right = repmat( norm_roi_right, rows(all_labs), 1 );
+
+end
+
+function [norm_x_l, norm_x_r] = get_normalized_cue_rois(image_l, image_r, min_x, max_x)
+
+xs_l = image_l.vertices([1, 3]);
+xs_r = image_r.vertices([1, 3]);
+
+norm_func = @(x, min, max) (x - min) ./ (max - min);
+norm_x_l = norm_func( xs_l, min_x, max_x );
+norm_x_r = norm_func( xs_r, min_x, max_x );
 
 end
 

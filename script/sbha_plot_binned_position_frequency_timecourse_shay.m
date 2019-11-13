@@ -180,3 +180,5 @@ if ( should_save_plots )
     shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
+
+end

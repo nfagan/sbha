@@ -35,7 +35,12 @@ counts = vertcat( counts{:} );
 event_indices = vertcat( event_indices{:} );
 labels = vertcat( fcat, labels{:} );
 
+norm_roi_left = vertcat( outputs.norm_roi_left );
+norm_roi_right = vertcat( outputs.norm_roi_right );
+
 assert_ispair( counts, labels );
+assert_ispair( norm_roi_left, labels );
+assert_ispair( norm_roi_right, labels );
 
 outs = struct();
 outs.params = params;
@@ -45,5 +50,7 @@ outs.counts_t = counts_t;
 outs.edges = edges;
 outs.identifiers = identifiers;
 outs.event_indices = event_indices;
+outs.norm_roi_left = norm_roi_left;
+outs.norm_roi_right = norm_roi_right;
 
 end
