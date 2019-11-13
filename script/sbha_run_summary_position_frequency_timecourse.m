@@ -75,7 +75,7 @@ all_data(:, (size(counts, 2)+1):end) = meta_labs;
 
 shared_utils.io.require_dir( xls_save_dir );
 save_p = fullfile( xls_save_dir, xls_filename(labels) );
-xlswrite( save_p, counts );
+xlswrite( save_p, all_data );
 
 end
 
