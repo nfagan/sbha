@@ -82,7 +82,7 @@ end
 function labs = make_additional_meta_labels(labels)
 
 labs = cellstr( labels, {'correct', 'made-selection' ...
-  , 'correct-direction', 'selected-direction', 'subject', 'identifier'} );
+  , 'congruent-direction', 'correct-direction', 'selected-direction', 'subject', 'identifier'} );
 
 end
 
