@@ -81,8 +81,12 @@ end
 
 function labs = make_additional_meta_labels(labels)
 
-labs = cellstr( labels, {'correct', 'made-selection' ...
-  , 'congruent-direction', 'correct-direction', 'selected-direction', 'subject', 'identifier'} );
+cats = {'correct', 'made-selection' ...
+  , 'congruent-direction', 'correct-direction', 'selected-direction', 'subject', 'identifier'};
+labs = cellstr( labels, cats );
+
+[~, ind] = ismember( 'congruent-direction', cats );
+labs(:, ind) = strrep( labs(:, ind), 'congruent-', '' );
 
 end
 
