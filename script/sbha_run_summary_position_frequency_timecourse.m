@@ -47,8 +47,8 @@ end
 
 %%
 
-roi_left = get_roi( outs.norm_roi_left, stat_position_padding );
-roi_right = get_roi( outs.norm_roi_right, stat_position_padding );
+roi_left = get_roi( outs.norm_roi_left, outs.screen_size, stat_position_padding );
+roi_right = get_roi( outs.norm_roi_right, outs.screen_size, stat_position_padding );
 
 left_counts = sbha_cue_summary_counts( outs.counts, outs.counts_t, outs.edges, stat_time_roi, roi_left );
 right_counts = sbha_cue_summary_counts( outs.counts, outs.counts_t, outs.edges, stat_time_roi, roi_right );
@@ -100,10 +100,12 @@ filename = filename(1:min(numel(filename), max_num_chars));
 
 end
 
-function norm_roi = get_roi(norm_roi, padding)
+function norm_roi = get_roi(norm_roi, screen_size, padding)
 
-norm_roi(:, 1) = norm_roi(:, 1) - padding/2;
-norm_roi(:, 2) = norm_roi(:, 2) + padding/2;
+pad_x = padding ./ (screen_size(:, 3) - screen_size(:, 1));
+
+norm_roi(:, 1) = norm_roi(:, 1) - pad_x/2;
+norm_roi(:, 2) = norm_roi(:, 2) + pad_x/2;
 
 end
 

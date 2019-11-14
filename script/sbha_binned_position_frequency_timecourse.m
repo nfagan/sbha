@@ -51,11 +51,10 @@ r_image = un_file.opts.STIMULI.right_image1;
 
 l_center = center_func( l_image );
 r_center = center_func( r_image );
+screen_size = un_file.opts.WINDOW.rect;
 
 switch ( norm_to )
   case 'screen'
-    screen_size = un_file.opts.WINDOW.rect;
-
     min_x = screen_size(1);
     max_x = screen_size(3);
     
@@ -128,6 +127,7 @@ outs.edges = edges;
 outs.event_indices = [ mask_time, targ_time ];
 outs.norm_roi_left = repmat( norm_roi_left, rows(all_labs), 1 );
 outs.norm_roi_right = repmat( norm_roi_right, rows(all_labs), 1 );
+outs.screen_size = repmat( screen_size(:)', rows(all_labs), 1 );
 
 end
 
