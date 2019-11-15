@@ -31,6 +31,11 @@ files_containing = {'nc-congruent-twotarg-29-Dec-2018 16_04_55';'nc-congruent-tw
 % Set axes color limits, or leave empty ([]) to set automatically.
 color_limits = [];
 
+% Plotting time limits.
+time_limits = [];
+
+% Fill values within range [x0, x1] with 0.
+fill_with_zero_in_x = [];
 %%  bin position frequencies over time
 
 event_name = ternary( is_rt_task, 'cue_onset', 'target_onset' );
@@ -49,6 +54,13 @@ if ( ~isempty(outs) )
   counts_t = outs.counts_t;
   labs = outs.labels';
   counts = outs.counts;
+  
+  if ( ~isempty(time_limits) )
+    [counts, counts_t] = keep_within_time( counts, counts_t, time_limits );
+  end
+  if ( ~isempty(fill_with_zero_in_x) )
+    counts = fill_edges_in_range_x( counts, edges, fill_with_zero_in_x );
+  end
 
   p_window_size = outs.params.position_window_size;
   t_window_size = outs.params.time_window_size;
@@ -180,5 +192,20 @@ if ( should_save_plots )
     shared_utils.io.req_write_text_file( fullfile(full_plot_p, 'info', filename), file_contents );
   end
 end
+
+end
+
+function [counts, counts_t] = keep_within_time(counts, counts_t, time_limits)
+
+ib = counts_t >= time_limits(1) & counts_t <= time_limits(2);
+counts_t = counts_t(ib);
+counts = counts(:, ib, :);
+
+end
+
+function counts = fill_edges_in_range_x(counts, edges, range)
+
+ib = edges >= range(1) & edges <= range(2);
+counts(:, :, ib) = 0;
 
 end
