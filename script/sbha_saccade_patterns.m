@@ -4,7 +4,6 @@ defaults = sbha_saccade_patterns_defaults();
 params = sbha.parsestruct( defaults, varargin );
 
 event_name = params.event_name;
-time_offsets = params.time_offsets;
 
 edf_trials_file = shared_utils.general.get( files, event_name );
 edf_events_file = shared_utils.general.get( files, 'edf_events' );
@@ -18,30 +17,8 @@ x = squeeze( edf_trials_file.aligned(:, :, key('x')) );
 y = squeeze( edf_trials_file.aligned(:, :, key('y')) );
 t = edf_trials_file.t;
 
-task_type = un_file.opts.STRUCTURE.task_type;
-
-is_rt_task = strcmp( task_type, 'rt' );
-
-if ( is_rt_task )
-  cue_onset_event = edf_events_file.event_key('cue_onset');
-  target_onset_event = edf_events_file.event_key('rt_target_onset');
-else
-  error( 'Function is not defined for task_type: "%s".', task_type );
-end
-
-event_index = edf_events_file.event_key(event_name);
-
-cue_onset_time = edf_events_file.events(:, cue_onset_event);
-target_onset_time = edf_events_file.events(:, target_onset_event);
-event_time = edf_events_file.events(:, event_index);
-
-start_times = round( cue_onset_time - event_time );
-stop_times = round( target_onset_time - event_time );
-
-if ( ~isempty(time_offsets) )
-  start_times = start_times + time_offsets(1);
-  stop_times = stop_times + time_offsets(2);
-end
+[cue_onset_event, target_onset_event] = get_start_stop_event_indices( edf_events_file, un_file, params );
+[start_times, stop_times] = get_start_stop_times( edf_events_file, cue_onset_event, target_onset_event, params );
 
 l_image = un_file.opts.STIMULI.left_image1.vertices;
 r_image = un_file.opts.STIMULI.right_image1.vertices;
@@ -107,6 +84,45 @@ end
 
 outs = struct();
 outs.labels = labs;
+
+end
+
+function [start_ind, stop_ind] = get_start_stop_event_indices(edf_events_file, un_file, params)
+
+task_type = un_file.opts.STRUCTURE.task_type;
+
+is_rt_task = strcmp( task_type, 'rt' );
+
+if ( is_rt_task )
+  start_ind = edf_events_file.event_key('cue_onset');
+  
+  if ( params.use_end_event )
+    stop_ind = edf_events_file.event_key(params.end_event_name);
+  else
+    stop_ind = edf_events_file.event_key('rt_target_onset');
+  end
+else
+  error( 'Function is not defined for task_type: "%s".', task_type );
+end
+
+end
+
+function [start_times, stop_times] = get_start_stop_times(edf_events_file, start_event_index, stop_event_index, params)
+
+event_index = edf_events_file.event_key(params.event_name);
+time_offsets = params.time_offsets;
+
+absolute_start_time = edf_events_file.events(:, start_event_index);
+absolute_stop_time = edf_events_file.events(:, stop_event_index);
+event_time = edf_events_file.events(:, event_index);
+
+start_times = round( absolute_start_time - event_time );
+stop_times = round( absolute_stop_time - event_time );
+
+if ( ~isempty(time_offsets) )
+  start_times = start_times + time_offsets(1);
+  stop_times = stop_times + time_offsets(2);
+end
 
 end
 
